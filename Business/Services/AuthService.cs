@@ -32,9 +32,9 @@ public class AuthService : IAuthService
 
         return new SignUpResult
         {
-            Succeeded = false,
-            Errors = new List<string>()
-
+            Succeeded = result.Succeeded,
+            Errors = result.Errors.Select(e => e.Description).ToList(),
+            Message = result.Succeeded ? "User created successfully." : "User creation failed."
         };
     }
     public async Task<string> SignInAsync(SignInDto formData)
