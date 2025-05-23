@@ -3,6 +3,7 @@ using Business.Dtos;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Net.Http.Json;
 
 namespace Business.Services;
@@ -51,10 +52,21 @@ public class AuthService : IAuthService
             throw new UnauthorizedAccessException("Invalid credentials.");
         }
 
-        using var httpClient = new HttpClient();
-        var tokenResponse = await httpClient.PostAsJsonAsync("https://tokenservice.azurewebsites.net/api/token", new
+        var user = await _userManager.FindByEmailAsync(formData.Email);
+        if (user == null)
         {
-            Email = formData.Email
+            throw new UnauthorizedAccessException("User not found.");
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var role = roles.FirstOrDefault() ?? "Member";
+
+
+        using var httpClient = new HttpClient();
+        var tokenResponse = await httpClient.PostAsJsonAsync("https://tokenservice-hghjfwgwf9cubxdp.swedencentral-01.azurewebsites.net/auth/token", new
+        {
+            UserId = user.Id,
+            Role = role
         });
 
         if (!tokenResponse.IsSuccessStatusCode)
@@ -63,6 +75,7 @@ public class AuthService : IAuthService
         }
 
         return await tokenResponse.Content.ReadAsStringAsync();
+      
 
     }
 

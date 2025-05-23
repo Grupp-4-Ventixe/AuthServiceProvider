@@ -1,6 +1,8 @@
 ﻿using Business.Dtos;
 using Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebApp.Controllers
 {
@@ -43,5 +45,6 @@ namespace WebApp.Controllers
             }
 
         }
+
     }
 }
