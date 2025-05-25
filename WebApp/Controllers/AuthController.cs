@@ -1,6 +1,7 @@
 ﻿using Business.Dtos;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -11,6 +12,7 @@ namespace WebApp.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         private readonly IAuthService _authService = authService;
+        private readonly UserManager<IdentityUser> _userManager;
 
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpDto formData)
@@ -32,8 +34,16 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             try
             {
-                var token = await _authService.SignInAsync(formData);
-                return Ok(new { Token = token });
+                var (token, email, name, role) = await _authService.SignInAsync(formData);
+
+                return Ok(new 
+                { 
+                    Token = token,
+                    Email = email,
+                    Name = name,
+                    Role = role
+
+                });
             }
             catch (UnauthorizedAccessException)
             {
@@ -45,6 +55,7 @@ namespace WebApp.Controllers
             }
 
         }
+
 
     }
 }
