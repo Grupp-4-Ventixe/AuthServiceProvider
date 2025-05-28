@@ -12,7 +12,7 @@ namespace WebApp.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         private readonly IAuthService _authService = authService;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<IdentityUser>? _userManager;
 
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpDto formData)

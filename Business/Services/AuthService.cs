@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace Business.Services;
@@ -22,6 +23,10 @@ public class AuthService : IAuthService
         _signInManager = signInManager;
     }
 
+    // Registrerar en ny användare och skickar ett verifieringsmail till angiven e-postadress.
+    // Returnerar ett resultatobjekt med status och eventuella fel.
+    // (Denna kod genererades med hjälp av GPT-4o-mini)
+
     public async Task<SignUpResult> SignUpAsync(SignUpDto formData)
     {
         var user = new IdentityUser
@@ -32,11 +37,30 @@ public class AuthService : IAuthService
 
         var result = await _userManager.CreateAsync(user, formData.Password);
 
+        if (result.Succeeded)
+        {
+            using var httpClient = new HttpClient();
+            var json = JsonSerializer.Serialize(new { email = formData.Email });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("https://verificatioservice-hcecd5avgddveufy.swedencentral-01.azurewebsites.net/api/verification/send", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new SignUpResult
+                {
+                    Succeeded = false,
+                    Errors = new List<string> { "Verification email failed to send." },
+                    Message = "User created but verification email failed."
+                };
+            }
+        }
+
         return new SignUpResult
         {
             Succeeded = result.Succeeded,
             Errors = result.Errors.Select(e => e.Description).ToList(),
-            Message = result.Succeeded ? "User created successfully." : "User creation failed."
+            Message = result.Succeeded ? "User created and verification email sent." : "User creation failed."
         };
     }
     public async Task<(string Token, string Email, string Name, string Role)> SignInAsync(SignInDto formData)
