@@ -39,6 +39,9 @@ Registrerar en ny användare.
 }
 ```
 
+![image](https://github.com/user-attachments/assets/f19e8f70-53d7-47e8-910c-4e86e484293f)
+
+
 ### `POST /auth/signin`
 
 Verifierar användarens uppgifter och hämtar en autentiseringstoken från **TokenService**.
@@ -62,24 +65,7 @@ Verifierar användarens uppgifter och hämtar en autentiseringstoken från **Tok
 }
 ```
 
-### `GET /auth/userinfo`
-
-Hämtar information om den autentiserade användaren.
-
-#### Header:
-```makefile
-Authorization: Bearer <din-token>
-```
-
-#### Response:
-```json
-{
-  "userId": "12345",
-  "username": "exampleUser",
-  "email": "user@example.com",
-  "roles": ["admin", "member"]
-}
-```
+![image](https://github.com/user-attachments/assets/7cb01179-6f48-472c-9370-7f273021938d)
 
 ---
 
@@ -119,7 +105,7 @@ TokenService är en separat mikrotjänst som utvecklats av Alec. Integration ske
 
 ## Publicering
 
-AuthService är publicerad på Azure:
+AuthService är publicerad på Azure (Web appen är nu borttagen):
 
 🔗 https://authservice-ventixe-fagve2emhbdnfpcn.swedencentral-01.azurewebsites.net/
 
